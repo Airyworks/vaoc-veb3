@@ -77,7 +77,7 @@ class Veb3 {
     attr.tim = types[7].has
     attr.spa = types[8].has
 
-    const top = types.filter(item => item.has).sort((a, b) => a.value - b.value)[0]
+    const top = types.filter(item => item.has).sort((a, b) => b.value - a.value)[0]
     if (top === undefined) {
       attr.main = -1
     } else {
@@ -97,6 +97,13 @@ class Veb3 {
       .getNewToken()
       .send({
         from: accounts[0]
+      })
+      .then(res => {
+        const id = res.events.Transfer[1].returnValues[2]
+        return {
+          id: id,
+          attr: this.parseAttribute(id)
+        }
       })
   }
   
