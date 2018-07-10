@@ -15,7 +15,7 @@
   "keywords": [
     "web3"
   ],
-  "author": "Tari",
+  "author": "Felix",
   "license": "MIT",
   "dependencies": {
     "web3": "^1.0.0-beta.34"
