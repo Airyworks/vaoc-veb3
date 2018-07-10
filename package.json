@@ -1,5 +1,5 @@
 {
-  "name": "vaoc-web3",
+  "name": "vaoc-veb3",
   "version": "1.0.0",
   "description": "Web3 Interface of vaoc",
   "main": "index.js",
@@ -9,17 +9,13 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://gitlab.com/Airyworks/vaoc-web3.git"
+    "url": "git+https://github.com/Airyworks/vaoc-veb3.git"
   },
   "keywords": [
     "web3"
   ],
   "author": "Felix",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://gitlab.com/Airyworks/vaoc-web3/issues"
-  },
-  "homepage": "https://gitlab.com/Airyworks/vaoc-web3#README",
+  "license": "MIT",
   "dependencies": {
     "web3": "^1.0.0-beta.34"
   },
