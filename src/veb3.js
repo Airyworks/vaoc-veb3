@@ -1,5 +1,11 @@
 import Web3 from 'web3'
-import config from './config.js'
+import config from './config.json'
+
+const MHSJAttributes = [
+  'wat', 'fir', 'wid', 'soi', 'ele',
+  'lig', 'dar',
+  'tim', 'spa'
+]
 
 class Veb3 {
   constructor () {
@@ -43,47 +49,28 @@ class Veb3 {
     attr.MgD = (parseInt(hex.substr(6, 2), 16) + 255) >> 2
     attr.SP = (parseInt(hex.substr(8, 2), 16) + 255) >> 1
 
-    const types = [
-      { i: 0, value: parseInt(hex.substr(10, 2), 16) },
-      { i: 1, value: parseInt(hex.substr(12, 2), 16) },
-      { i: 2, value: parseInt(hex.substr(14, 2), 16) },
-      { i: 3, value: parseInt(hex.substr(16, 2), 16) },
-      { i: 4, value: parseInt(hex.substr(18, 2), 16) },
-      { i: 5, value: parseInt(hex.substr(20, 2), 16) },
-      { i: 6, value: parseInt(hex.substr(22, 2), 16) },
-      { i: 7, value: parseInt(hex.substr(24, 2), 16) },
-      { i: 8, value: parseInt(hex.substr(26, 2), 16) }
-    ]
-
-    for (let i = 0; i < 5; i++) {
-      types[i].has = types[i].value > 180
+    const types = []
+    for (let i = 0; i < 9; i++) {
+      types.push({
+        i,
+        value: parseInt(hex.substr(10 + i * 2, 2), 16)
+      })
+      if (i < 5) {
+        types[i].has = types[i].value > 180
+      } else if (i < 7) {
+        types[i].has = types[i].value > 230
+      } else {
+        types[i].has = types[i].value > 252
+      }
+      attr[MHSJAttributes[i]] = types[i].has
     }
-    for (let i = 5; i < 7; i++) {
-      types[i].has = types[i].value > 230
-    }
-    for (let i = 7; i < 9; i++) {
-      types[i].has = types[i].value > 252
-    }
-
-    attr.wat = types[0].has
-    attr.fir = types[1].has
-    attr.wid = types[2].has
-    attr.soi = types[3].has
-    attr.ele = types[4].has
-    
-    attr.lig = types[5].has
-    attr.dar = types[6].has
-
-    attr.tim = types[7].has
-    attr.spa = types[8].has
 
     const top = types.filter(item => item.has).sort((a, b) => b.value - a.value)[0]
-    if (top === undefined) {
-      attr.main = -1
-    } else {
-      let length = types.filter(item => item.value === top.value).length
-      const index = parseInt(hex.substr(10, 2), 16) % length
-      attr.main = types.filter(item => item.value === top.value)[index].i
+    if (top !== undefined) {
+      const topTypes = types.filter(item => item.value === top.value && item.has)
+      const length = topTypes.length
+      const index = parseInt(hex.substr(28, 2), 16) % length
+      attr.main = MHSJAttributes[topTypes[index].i]
     }
 
     attr.memory = parseInt(hex.substr(30, 2), 16) > 252
@@ -130,5 +117,4 @@ class Veb3 {
     return Promise.all(pl)
   }
 }
-window.Veb3 = Veb3
 export default Veb3

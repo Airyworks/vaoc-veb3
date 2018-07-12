@@ -6,7 +6,9 @@
   "types": "./dist/index.d.ts",
   "scripts": {
     "test": "webpack",
-    "build": "NODE_ENV=production webpack"
+    "build": "(NODE_ENV=production || set NODE_ENV=production) && webpack && cp src/veb3.d.ts dist/index.d.ts",
+    "clean": "rm -rf ./dist",
+    "rebuild": "npm run clean && npm run build"
   },
   "repository": {
     "type": "git",
