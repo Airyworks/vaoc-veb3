@@ -1,5 +1,4 @@
 import Web3 from 'web3'
-import config from './config.json'
 
 const MHSJAttributes = [
   'wat', 'fir', 'wid', 'soi', 'ele',
@@ -7,8 +6,8 @@ const MHSJAttributes = [
   'tim', 'spa'
 ]
 
-class Veb3 {
-  constructor () {
+export class Veb3 {
+  constructor (config) {
     if (typeof web3 !== 'undefined') {
       console.debug(web3.currentProvider)
       this.web3 = new Web3(web3.currentProvider)
@@ -117,4 +116,3 @@ class Veb3 {
     return Promise.all(pl)
   }
 }
-export default Veb3

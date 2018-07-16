@@ -2,14 +2,8 @@
   "name": "vaoc-veb3",
   "version": "1.0.0",
   "description": "Web3 Interface of vaoc",
-  "main": "./dist/index.js",
-  "types": "./dist/index.d.ts",
-  "scripts": {
-    "test": "webpack",
-    "build": "(NODE_ENV=production || set NODE_ENV=production) && webpack && cp src/veb3.d.ts dist/index.d.ts",
-    "clean": "rm -rf ./dist",
-    "rebuild": "npm run clean && npm run build"
-  },
+  "main": "./src/veb3.js",
+  "types": "./src/veb3.d.ts",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Airyworks/vaoc-veb3.git"
@@ -22,8 +16,5 @@
   "dependencies": {
     "web3": "^1.0.0-beta.34"
   },
-  "devDependencies": {
-    "webpack": "^4.10.2",
-    "webpack-cli": "^3.0.0"
-  }
+  "devDependencies": {}
 }

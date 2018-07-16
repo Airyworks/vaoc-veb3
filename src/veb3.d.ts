@@ -1,6 +1,6 @@
 type MHSJAttributes = "wat" | "fir" | "wid" | "soi" | "ele" | "lig" | "dar" | "tim" | "spa"
 
-export declare interface MahouShoujo {
+declare interface MahouShoujo {
   HP: number
   MP: number
   MgA: number
@@ -19,8 +19,29 @@ export declare interface MahouShoujo {
   memory: boolean
 }
 
+declare interface ABI {
+  constant: boolean,
+  inputs: { name: string, type: string }[],
+  name: string,
+  outputs: { name: string, type: string }[],
+  payable: false,
+  stateMutability: string,
+  type: string,
+  signature: string
+}
+
+declare interface Veb3Config {
+  START_BLOCK_NUMBER: number,
+  INTERVAL_PER_IDER: number,
+  DEFAULT_PROVIDER: string,
+  KURO_ADDRESS: string,
+  SHIRO_ADDRESS: string,
+  KURO_ABI: ABI[]
+  SHIRO_ABI: ABI[]
+}
+
 export declare class Veb3 {
-  constructor ()
+  constructor (Veb3Config)
   getBlockNumberNow(): Promise<number>
   getBlockHash(number: number): Promise<string>
   parseAttribute(id: string): MahouShoujo
