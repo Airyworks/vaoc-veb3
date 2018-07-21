@@ -70,6 +70,9 @@ export class Veb3 {
       const length = topTypes.length
       const index = parseInt(hex.substr(28, 2), 16) % length
       attr.main = MHSJAttributes[topTypes[index].i]
+      attr.mainP = topTypes[index].value
+    } else {
+      attr.main = 'none'
     }
 
     attr.memory = parseInt(hex.substr(30, 2), 16) > 252

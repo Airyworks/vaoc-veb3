@@ -15,7 +15,8 @@ declare interface MahouShoujo {
   dar: boolean
   tim: boolean
   spa: boolean
-  main?: MHSJAttributes
+  main: MHSJAttributes | 'none'
+  mainP: number
   memory: boolean
 }
 
