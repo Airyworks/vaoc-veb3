@@ -43,6 +43,7 @@ declare interface Veb3Config {
 
 export declare class Veb3 {
   constructor (Veb3Config)
+  web3: Web3
   getBlockNumberNow(): Promise<number>
   getBlockHash(number: number): Promise<string>
   parseAttribute(id: string): MahouShoujo
