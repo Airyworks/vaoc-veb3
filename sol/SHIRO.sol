@@ -46,7 +46,7 @@ contract SHIRO {
         founder = msg.sender;
     }
 
-    function totalSupply() view public returns (uint256 supply) {
+    function totalSupply() public view returns (uint256 supply) {
         return _totalSupply;
     }
 
@@ -55,26 +55,26 @@ contract SHIRO {
     }
 
     function transfer(address _to, uint256 _value) public returns (bool) {
-        require (_to != address(0));
+        require (_to != address(0), "Invalid address");
 
-        require(balances[msg.sender] >= _value);
+        require(balances[msg.sender] >= _value, "Insufficient balance");
         balances[msg.sender] = balances[msg.sender].sub(_value);
         balances[_to] = balances[_to].add(_value);
         emit Transfer(msg.sender, _to, _value);
         return true;
     }
 
-    function spend(address _from, uint _value) public {
-        require(balances[_from] >= _value);
+    function spend(address _from, uint256 _value) public {
+        require(balances[_from] >= _value, "Insufficient balance");
         balances[_from] = balances[_from].sub(_value);
         distributed = distributed.sub(_value);
         emit Transfer(_from, address(0), _value);
     }
 
     function transferFrom(address _from, address _to, uint256 _value) public returns (bool) {
-        require (_to != address(0));
+        require (_to != address(0), "Invalid address");
 
-        require(balances[_from] >= _value && allowed[_from][msg.sender] >= _value);
+        require(balances[_from] >= _value && allowed[_from][msg.sender] >= _value, "Insufficient balance");
         balances[_from] = balances[_from].sub(_value);
         balances[_to] = balances[_to].add(_value);
         emit Transfer(_from, _to, _value);
@@ -87,13 +87,13 @@ contract SHIRO {
         return true;
     }
 
-    function allowance(address _owner, address _spender) view public returns (uint256) {
+    function allowance(address _owner, address _spender) public view returns (uint256) {
         return allowed[_owner][_spender];
     }
 
     function distribute(address _to, uint256 _amount) public returns (bool) {
-        require(msg.sender == founder);
-        require(distributed.add(_amount) <= _totalSupply);
+        require(msg.sender == founder, "Unauthorized");
+        require(distributed.add(_amount) <= _totalSupply, "Exceeded total supply");
 
         distributed = distributed.add(_amount);
         balances[_to] = balances[_to].add(_amount);
@@ -102,7 +102,7 @@ contract SHIRO {
     }
 	
     function distributeMultiple(address[] _tos, uint256[] _values) public returns (bool) {
-        require(msg.sender == founder);
+        require(msg.sender == founder, "Unauthorized");
 		
         uint256 total = 0;
         uint256 i = 0; 
@@ -110,7 +110,7 @@ contract SHIRO {
             total = total.add(_values[i]);
         }
 
-        require(distributed.add(total) < _totalSupply);
+        require(distributed.add(total) < _totalSupply, "Exceeded total supply");
 
         for (i = 0; i <= _tos.length; i++) {
             distributed = distributed.add(_values[i]);
@@ -121,7 +121,7 @@ contract SHIRO {
     }
 
     function changeFounder(address newFounder) public {
-        require(msg.sender == founder);
+        require(msg.sender == founder, "Unauthorized");
 
         founder = newFounder;
     }

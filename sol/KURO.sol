@@ -66,28 +66,28 @@ contract KURO {
     }
 
     modifier onlyOwnerOf(uint256 _tokenId) {
-        require(ownerOf(_tokenId) == msg.sender);
+        require(ownerOf(_tokenId) == msg.sender, "Unauthorized address");
         _;
     }
   
     modifier canTransfer(uint256 _tokenId) {
-        require(isApprovedOrOwner(msg.sender, _tokenId));
+        require(isApprovedOrOwner(msg.sender, _tokenId), "Unauthorized address");
         _;
     }
 
     function setSHIRO(address _shiro) public {
-        require(founder == msg.sender);
+        require(founder == msg.sender, "Unauthorized address");
         SHIRO = _shiro;
     }
   
     function balanceOf(address _owner) public view returns (uint256) {
-        require(_owner != address(0));
+        require(_owner != address(0), "Invalid address");
         return ownedTokensCount[_owner];
     }
 
     function ownerOf(uint256 _tokenId) public view returns (address) {
         address owner = tokenOwner[_tokenId];
-        require(owner != address(0));
+        require(owner != address(0), "Invalid address");
         return owner;
     }
 
@@ -98,8 +98,8 @@ contract KURO {
 
     function approve(address _to, uint256 _tokenId) public {
         address owner = ownerOf(_tokenId);
-        require(_to != owner);
-        require(msg.sender == owner || isApprovedForAll(owner, msg.sender));
+        require(_to != owner, "The target address can not be self");
+        require(msg.sender == owner || isApprovedForAll(owner, msg.sender), "Unauthorized");
 
         if (getApproved(_tokenId) != address(0) || _to != address(0)) {
             tokenApprovals[_tokenId] = _to;
@@ -112,7 +112,7 @@ contract KURO {
     }
 
     function setApprovalForAll(address _to, bool _approved) public {
-        require(_to != msg.sender);
+        require(_to != msg.sender, "Invalid address");
         operatorApprovals[msg.sender][_to] = _approved;
         emit ApprovalForAll(msg.sender, _to, _approved);
     }
@@ -122,8 +122,8 @@ contract KURO {
     }
 
     function transferFrom(address _from, address _to, uint256 _tokenId) public canTransfer(_tokenId) {
-        require(_from != address(0));
-        require(_to != address(0));
+        require(_from != address(0), "Invalid from address");
+        require(_to != address(0), "Invalid to address");
 
         clearApproval(_from, _tokenId);
         removeTokenFrom(_from, _tokenId);
@@ -140,18 +140,18 @@ contract KURO {
     }
 
     function getNewToken() public {
-        require(SHIRO.call(spendABI, msg.sender, 648));
-        bytes32 lastBlockHash = block.blockhash(block.number.sub(1));
-        uint256 tokenId = uint256(sha256(msg.sender, lastBlockHash, block.coinbase));
+        require(SHIRO.call(spendABI, msg.sender, 648), "Failure to deduct money");
+        bytes32 lastBlockHash = blockhash(block.number.sub(1));
+        uint256 tokenId = uint256(keccak256(abi.encodePacked(msg.sender, lastBlockHash, block.coinbase)));
         _mint(msg.sender, tokenId);
     }
 
     function getOwnerTokens(address _to, uint start, uint end) public view returns (uint[]) {
-        require(_to != address(0));
-        require(start > 0);
-        require(end.add(1).sub(start) <= 30);
-        require(start <= end);
-        require(end <= ownedTokensCount[_to]);
+        require(_to != address(0), "Invalid address");
+        require(start > 0, "Start must greater than zero");
+        require(end.add(1).sub(start) <= 30, "Maximum query 30 records");
+        require(start <= end, "End can not less then start");
+        require(end <= ownedTokensCount[_to], "End exceeds the upper limit");
         uint[] memory tokens = new uint[](end.add(1).sub(start));
         for (uint i = start; i <= end; i++)
             tokens[i - start] = ownerTokensList[_to][i];
@@ -159,7 +159,7 @@ contract KURO {
     }
 
     function _mint(address _to, uint256 _tokenId) internal {
-        require(_to != address(0));
+        require(_to != address(0), "Invalid address");
         addTokenTo(_to, _tokenId);
         emit Transfer(address(0), _to, _tokenId);
     }
@@ -171,7 +171,7 @@ contract KURO {
     }
 
     function clearApproval(address _owner, uint256 _tokenId) internal {
-        require(ownerOf(_tokenId) == _owner);
+        require(ownerOf(_tokenId) == _owner, "Unauthorized address");
         if (tokenApprovals[_tokenId] != address(0)) {
             tokenApprovals[_tokenId] = address(0);
             emit Approval(_owner, address(0), _tokenId);
@@ -179,7 +179,7 @@ contract KURO {
     }
 
     function addTokenTo(address _to, uint256 _tokenId) internal {
-        require(tokenOwner[_tokenId] == address(0));
+        require(tokenOwner[_tokenId] == address(0), "Nonexistent token");
         tokenOwner[_tokenId] = _to;
         uint countNow = ownedTokensCount[_to].add(1);
         ownerTokensList[_to][countNow] = _tokenId;
@@ -188,7 +188,7 @@ contract KURO {
     }
 
     function removeTokenFrom(address _from, uint256 _tokenId) internal {
-        require(ownerOf(_tokenId) == _from);
+        require(ownerOf(_tokenId) == _from, "Nonexistent token");
 
         uint index = tokenIndexforOwner[_tokenId];
         uint countBefore = ownedTokensCount[_from];
